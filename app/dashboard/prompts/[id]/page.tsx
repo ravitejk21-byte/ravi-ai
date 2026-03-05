@@ -276,8 +276,8 @@ export default function EditPromptPage() {
                         <div className="space-y-1">
                           <Label className="text-xs">Default Value</Label>
                           <Input
-                            value={variable.defaultValue || ''}
-                            onChange={(e) => handleUpdateVariable(index, 'defaultValue', e.target.value)}
+                            value={variable.default || ''}
+                            onChange={(e) => handleUpdateVariable(index, 'default', e.target.value)}
                             placeholder="Optional default"
                           />
                         </div>
