@@ -46,7 +46,7 @@ export default function DeliverablesPage() {
   const [deleteDeliverableId, setDeleteDeliverableId] = useState<string | null>(null);
 
   const filteredDeliverables = deliverables.filter((deliverable) => {
-    const matchesSearch = deliverable.name.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesSearch = deliverable.title.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || deliverable.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -148,10 +148,10 @@ export default function DeliverablesPage() {
                         href={`/dashboard/deliverables/${deliverable.id}`}
                         className="font-medium hover:text-primary transition-colors"
                       >
-                        {deliverable.name}
+                        {deliverable.title}
                       </Link>
                       <p className="text-sm text-muted-foreground">
-                        {getEngagementName(deliverable.engagementId)} • {' '}
+                        {getEngagementName(deliverable.engagementId || '')} • {' '}
                         {format(new Date(deliverable.createdAt), 'MMM d, yyyy')}
                       </p>
                     </div>
