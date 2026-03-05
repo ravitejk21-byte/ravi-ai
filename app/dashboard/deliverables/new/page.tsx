@@ -46,7 +46,7 @@ export default function NewDeliverablePage() {
     if (selectedPrompt) {
       const defaults: Record<string, string> = {};
       selectedPrompt.variables.forEach((v) => {
-        defaults[v.name] = v.defaultValue || '';
+                defaults[v.name] = v.default || '';
       });
       setVariableValues(defaults);
       if (!deliverableName) {
