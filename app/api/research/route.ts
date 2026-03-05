@@ -134,8 +134,8 @@ Generate sub-questions as JSON array:`;
   // Fallback: parse numbered list
   return response
     .split("\n")
-    .filter(line => /^\d+\./.test(line.trim()))
-    .map(line => line.replace(/^\d+\.\s*/, "").trim())
+        .filter((line: string) => /^\d+\./.test(line.trim()))
+        .map((line: string) => line.replace(/^\d+\.\s*/, "").trim())
     .slice(0, maxQuestions);
 }
 
