@@ -106,12 +106,11 @@ export default function NewDeliverablePage() {
     const newDeliverable = {
       id: uuidv4(),
       engagementId: selectedEngagementId || 'unassigned',
-      name: deliverableName,
-      type: 'custom' as const,
+            title: deliverableName,
+            type: 'REPORT' as const,
       status: 'draft' as const,
       promptId: selectedPromptId,
-      variables: variableValues,
-      content: currentContent,
+            content: currentContent,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
