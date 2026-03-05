@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { DocType } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { LLMClient } from "@/lib/llm";
@@ -56,7 +57,7 @@ export async function POST(req: Request) {
     const document = await prisma.document.create({
       data: {
         name: file.name,
-        type: docType || "OTHER",
+                  type: ((docType || "OTHER") as DocType),
         fileUrl: "local://" + file.name, // In production, upload to S3
         fileSize: file.size,
         content: content.slice(0, 10000), // Store preview
