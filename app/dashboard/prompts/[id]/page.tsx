@@ -282,7 +282,7 @@ export default function EditPromptPage() {
                           />
                         </div>
                       </div>
-                      <{variable.type === 'select' && (
+                      {variable.type === 'select' && (
                         <div className="space-y-1">
                           <Label className="text-xs">Options (comma-separated)</Label>
                           <Input
