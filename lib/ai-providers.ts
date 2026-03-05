@@ -173,7 +173,7 @@ export async function createChatCompletion(
         model,
         messages,
         temperature: options?.temperature ?? 0.7,
-        maxTokens: options?.maxTokens,
+        maxOutputTokens: options?.maxTokens,
       });
       
       return {
