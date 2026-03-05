@@ -1,0 +1,234 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 1. USER MANAGEMENT
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  prompts       Prompt[]
+  workspaces    Workspace[]
+  documents     Document[]
+  
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+// 2. PROMPT STUDIO
+model Prompt {
+  id            String    @id @default(cuid())
+  name          String
+  description   String?
+  version       Int       @default(1)
+  isActive      Boolean   @default(true)
+  
+  role          String
+  objective     String
+  context       String
+  instructions  String
+  constraints   String?
+  outputFormat  String
+  
+  variables     Json
+  
+  framework     Framework?
+  outputType    OutputType
+  tone          Tone      @default(PROFESSIONAL)
+  
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  
+  workspaceId   String?
+  workspace     Workspace? @relation(fields: [workspaceId], references: [id])
+  
+  generations   Generation[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@map("prompts")
+}
+
+enum Framework {
+  ISO_31000
+  COSO_ERM
+  IPPF
+  GIAS
+  NIST
+  CUSTOM
+}
+
+enum OutputType {
+  SLIDES
+  REPORT
+  TABLE
+  MATRIX
+  PLAN
+  PROPOSAL
+  CHARTER
+}
+
+enum Tone {
+  PROFESSIONAL
+  EXECUTIVE
+  TECHNICAL
+  BOARD
+}
+
+// 3. ENGAGEMENT WORKSPACES
+model Workspace {
+  id            String    @id @default(cuid())
+  name          String
+  clientName    String
+  sector        String?
+  description   String?
+  status        Status    @default(ACTIVE)
+  
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  
+  prompts       Prompt[]
+  documents     Document[]
+  generations   Generation[]
+  notes         Note[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@map("workspaces")
+}
+
+enum Status {
+  ACTIVE
+  ARCHIVED
+  COMPLETED
+}
+
+// 4. KNOWLEDGE BASE (RAG)
+model Document {
+  id            String    @id @default(cuid())
+  name          String
+  type          DocType
+  fileUrl       String
+  fileSize      Int
+  content       String?
+  
+  isIndexed     Boolean   @default(false)
+  chunks        DocumentChunk[]
+  
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  
+  workspaceId   String?
+  workspace     Workspace? @relation(fields: [workspaceId], references: [id])
+  
+  createdAt     DateTime  @default(now())
+  
+  @@map("documents")
+}
+
+enum DocType {
+  AUDIT_MANUAL
+  ERM_POLICY
+  RFP
+  PRIOR_REPORT
+  GOVERNANCE_CHARTER
+  REGULATORY
+  OTHER
+}
+
+// Vector store for RAG - 768 dimensions for Gemini embedding-001
+model DocumentChunk {
+  id            String    @id @default(cuid())
+  content       String
+  embedding     Unsupported("vector(768)")?  // Gemini embedding-001 = 768 dimensions
+  
+  documentId    String
+  document      Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  
+  @@map("document_chunks")
+}
+
+// 5. GENERATIONS & OUTPUTS
+model Generation {
+  id            String    @id @default(cuid())
+  title         String
+  
+  promptId      String
+  prompt        Prompt    @relation(fields: [promptId], references: [id])
+  
+  variables     Json
+  
+  rawOutput     String
+  structuredOutput Json?
+  
+  qualityScore  Int?
+  qualityFlags  Json?
+  
+  exports       Export[]
+  
+  workspaceId   String?
+  workspace     Workspace? @relation(fields: [workspaceId], references: [id])
+  
+  createdAt     DateTime  @default(now())
+  
+  @@map("generations")
+}
+
+model Export {
+  id            String    @id @default(cuid())
+  format        ExportFormat
+  fileUrl       String
+  fileName      String
+  
+  generationId  String
+  generation    Generation @relation(fields: [generationId], references: [id])
+  
+  createdAt     DateTime  @default(now())
+  
+  @@map("exports")
+}
+
+enum ExportFormat {
+  MARKDOWN
+  DOCX
+  PPTX
+  CSV
+  JSON
+}
+
+// 6. NOTES & DECISIONS
+model Note {
+  id            String    @id @default(cuid())
+  content       String
+  type          NoteType  @default(GENERAL)
+  
+  workspaceId   String
+  workspace     Workspace @relation(fields: [workspaceId], references: [id])
+  
+  createdAt     DateTime  @default(now())
+  
+  @@map("notes")
+}
+
+enum NoteType {
+  GENERAL
+  ASSUMPTION
+  DECISION
+  RISK
+  ISSUE
+}
