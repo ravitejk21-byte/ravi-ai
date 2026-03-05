@@ -2,7 +2,6 @@
   "buildCommand": "prisma generate && next build",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "nodeVersion": "20.x",
   "env": {
     "NEXTAUTH_URL": {
       "description": "Your Vercel deployment URL (e.g., https://ravi-ai.vercel.app)"
@@ -14,10 +13,10 @@
       "description": "Supabase PostgreSQL connection string with pgvector"
     },
     "GEMINI_API_KEY": {
-      "description": "Google Gemini API key (free at makersuite.google.com/app/apikey)"
+      "description": "Google Gemini API key (get from https://aistudio.google.com/app/apikey)"
     },
     "DEFAULT_LLM_PROVIDER": {
-      "description": "gemini (recommended for Vercel - includes free embeddings)"
+      "description": "gemini"
     }
   }
 }
