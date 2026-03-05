@@ -69,7 +69,7 @@ export async function POST(req: Request) {
         variables,
         rawOutput,
         qualityScore: qualityReport.score,
-        qualityFlags: qualityReport.checks,
+      qualityFlags: qualityReport.checks as unknown as any,
         workspaceId: workspaceId || null,
       },
     });
